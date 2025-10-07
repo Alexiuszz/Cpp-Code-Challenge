@@ -9,23 +9,17 @@
 class Heap
 {
 private:
-    std::vector<int> h;
-    void MaxHeapifyRec(std::vector<int> &a, int i, int heapSize);
-    void MaxHeapify(std::vector<int> &a, int i, int heapSize);
-    void BuildHeap(std::vector<int> &a);
-
-public:
-    Heap();
-    Heap(std::vector<int> &h);
-
     int GetLeft(int i);
     int GetRight(int i);
-};
 
-Heap::Heap(std::vector<int> &h)
-{
-    BuildHeap(h);
-}
+public:
+    void MaxHeapifyRec(std::vector<int> &a, int i, int heapSize);
+    void MaxHeapify(std::vector<int> &a, int i, int heapSize);
+    void MinHeapify(std::vector<int> &a, int i, int heapSize);
+    void BuildHeap(std::vector<int> &a);
+
+    void HeapSort(std::vector<int> &a);
+};
 
 int Heap::GetLeft(int i)
 {
@@ -36,6 +30,33 @@ int Heap::GetRight(int i)
     return 2 * i + 2;
 }
 
+void Heap::HeapSort(std::vector<int> &a)
+{
+    if (a.size() <= 1)
+        return;
+
+    BuildHeap(a);
+    int n = static_cast<int>(a.size());
+    int heapSize = n;
+    for (int i = n - 1; i > 0; --i)
+    {
+        std::swap(a[0], a[i]);
+        heapSize = heapSize - 1;
+        MaxHeapify(a, 0, heapSize);
+    }
+}
+
+void Heap::MinHeapify(std::vector<int> &a, int i, int heapSize){
+    while(true){
+        int smallest = i;
+        int l = 2 * i + 1, r = 2 * i + 2;
+        if(l<heapSize && a[l] < a[smallest]) smallest = l;
+        if(r<heapSize && a[r] < a[smallest]) smallest = r;
+        if(smallest == i) return;
+        std::swap(a[i], a[smallest]);
+        i = smallest;
+    }
+}
 void Heap::MaxHeapify(std::vector<int> &a, int i, int heapSize)
 {
     while (true)
@@ -73,15 +94,15 @@ void Heap::BuildHeap(std::vector<int> &a)
     int heapSize = static_cast<int>(a.size());
     for (int i = heapSize / 2 - 1; i >= 0; --i)
     {
-        MaxHeapify(a, i, heapSize);
+        MinHeapify(a, i, heapSize);
     }
 }
 
 int main()
 {
     std::vector<int> arr = {2, 1, 4, 5};
-    Heap h(arr);
-
+    Heap h;
+    h.BuildHeap(arr);
     for (int i = 0; i < arr.size(); i++)
     {
         std::cout << arr[i] << " ";
